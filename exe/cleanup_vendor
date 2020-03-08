@@ -1,3 +1,5 @@
 #!/usr/bin/env ruby
 
-require "cleanup_vendor"
+require 'cleanup_vendor'
+
+CleanupVendor.cleanup(ARGV.first)
