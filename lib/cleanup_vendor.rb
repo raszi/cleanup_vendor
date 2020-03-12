@@ -14,7 +14,7 @@ module CleanupVendor
     def run(dir, opts = {})
       summary = []
 
-      filter(dir, {}.merge(DEFAULTS, opts)) do |f|
+      filter(dir, DEFAULTS.merge(opts)) do |f|
         if opts[:summary]
           files = File.file?(f) ? [f] : dir_entries(f).grep_v('.').map { |file| File.join(f, file) }
           summary << files.map { |f| File.stat(File.join(dir, f)) }
