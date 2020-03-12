@@ -1,5 +1,56 @@
 #!/usr/bin/env ruby
 
 require 'cleanup_vendor'
+require 'optparse'
 
-CleanupVendor.cleanup(ARGV.first)
+options = {}
+
+opt_parser = OptionParser.new do |opts|
+  name = File.basename(__FILE__)
+  opts.banner = "Usage: #{name} [options]"
+
+  opts.separator ''
+  opts.separator 'Specific options:'
+
+  opts.on('-v', '--[no-]verbose', 'Run verbosely') do |v|
+    options[:verbose] = v
+  end
+
+  opts.on('--dry-run', 'Print the actions without executing them') do |d|
+    options[:dry_run] = d
+  end
+
+  opts.on('-s', '--summary', 'Display a summary after execution') do |s|
+    options[:summary] = s
+  end
+
+  opts.on('-d', '--directory DIR', 'Match on this directory') do |dir|
+    options[:directories] ||= []
+    options[:directories] << dir
+  end
+
+  opts.on('-x', '--extension EXT', 'Match on extension') do |ext|
+    options[:extensions] ||= []
+    options[:extensions] << ext
+  end
+
+  opts.on('-f', '--file FILE', 'Match on these filenames') do |file|
+    options[:filenames] ||= []
+    options[:filenames] << file
+  end
+
+  opts.on_tail('-h', '--help', 'Show this message') do
+    puts opts
+    exit
+  end
+
+  opts.on_tail('-V', '--version', 'Show version') do
+    puts CleanupVendor::VERSION
+    exit
+  end
+end
+
+args = opt_parser.parse!(ARGV)
+dir = args.shift || 'vendor/bundle/ruby'
+
+CleanupVendor.run(dir, options)
