@@ -6,7 +6,7 @@ RSpec.describe CleanupVendor do
   end
 
   describe '.run' do
-    let(:dir) { Dir.mktmpdir('cleanup_vendor') }
+    let(:dir) { Pathname.new(Dir.mktmpdir('cleanup_vendor')) }
 
     let!(:extensions) do
       %w[c cpp gem h hpp java log md mk o rdoc txt].map do |ext|
