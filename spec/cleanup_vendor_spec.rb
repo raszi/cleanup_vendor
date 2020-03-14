@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'tempfile'
 
 RSpec.describe CleanupVendor do
@@ -52,7 +54,7 @@ RSpec.describe CleanupVendor do
       it 'should remove all matching entries' do
         described_class.run(dir)
 
-        files = dir.glob('**/*', File::FNM_DOTMATCH).reject { |p| p === dir }
+        files = dir.glob('**/*', File::FNM_DOTMATCH).reject { |p| p == dir }
         expect(files).to all(satisfy { |p| p.relative_path_from(dir).to_s.start_with?('kept') })
         expect(files).to include(*non_top_level_directories)
       end
