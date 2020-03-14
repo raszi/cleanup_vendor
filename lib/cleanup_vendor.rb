@@ -9,8 +9,8 @@ module CleanupVendor
     extensions: %w[c cpp gem h hpp java log md mk o rdoc txt],
     filenames: %w[
       README Makefile LICENSE CHANGELOG .codeclimate.yml .dockerignore
-      .gitignore .rubocop.yml .ruby-version .ruby-gemset .rspec .rspec_status
-      .travis.yml .yardopts
+      .gitignore .gitkeep .rubocop.yml .ruby-version .ruby-gemset .rspec
+      .rspec_status .travis.yml .yardopts
     ],
     top_level_directories: %w[spec],
     directories: %w[.git .github]
