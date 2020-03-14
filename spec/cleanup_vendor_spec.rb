@@ -58,21 +58,33 @@ RSpec.describe CleanupVendor do
       end
     end
 
-    context 'with summary' do
-      it 'should display a nice summary' do
-        expected_count = all_files_count
-        expect { described_class.run(dir, summary: true) }.to output(/Summary:\s+Removed files:\s+#{expected_count}/).to_stdout
-      end
-    end
-
     context 'with dry run' do
       it 'should keep all the entries' do
-        expect { described_class.run(dir, dry_run: true) }.to output(/Removing/).to_stdout
+        described_class.run(dir, dry_run: true)
 
         left_files = dir.glob('**/*', File::FNM_DOTMATCH)
         expect(left_files).to include(*files)
         expect(left_files).to include(*dirs)
         expect(left_files).to include(*extensions)
+      end
+    end
+
+    context 'with verbose' do
+      it 'should display what it removes' do
+        expect { described_class.run(dir, verbose: true) }.to output(/Removing/).to_stderr
+      end
+    end
+
+    context 'with print0' do
+      it 'should display all the removed files separated by 0' do
+        expect { described_class.run(dir, print0: true) }.to output(/\0/).to_stdout
+      end
+    end
+
+    context 'with summary' do
+      it 'should display a nice summary' do
+        expected_count = all_files_count
+        expect { described_class.run(dir, summary: true) }.to output(/Summary:\s+Removed files:\s+#{expected_count}/).to_stderr
       end
     end
   end

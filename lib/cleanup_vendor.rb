@@ -17,7 +17,13 @@ module CleanupVendor
       filter(dir, DEFAULTS.merge(opts)) do |p|
         summary << collect_summary(dir, p) if opts[:summary]
 
-        puts "Removing #{p}..." if opts[:dry_run] || opts[:verbose]
+        $stderr.puts "Removing #{p}..." if opts[:verbose]
+
+        if opts[:print0]
+          $stdout.write p.to_s
+          $stdout.putc 0
+        end
+
         FileUtils.remove_entry(p) unless opts[:dry_run]
       end
 
@@ -29,16 +35,17 @@ module CleanupVendor
       return to_enum(:filter, dir, opts) unless block_given?
 
       extensions, filenames, directories, top_level_directories = get_options(opts)
+      filtered = Set.new
 
       dir_entries(dir) do |p|
         basename = p.basename.to_s
-        next if basename == '.'
 
-        if p.file? && (filenames.include?(basename) || extensions.include?(p.extname.delete('.')))
-          yield(p)
-        elsif p.directory? && directories.include?(basename)
-          yield(p)
-        elsif p.directory? && top_level_directories.include?(basename) && p.parent.glob('*.gemspec').any?
+        next if basename == '.'
+        next if p.descend.any? { |p| filtered.include?(p) }
+
+        if p.file? && (filenames.include?(basename) || extensions.include?(p.extname.delete('.'))) ||
+           p.directory? && (directories.include?(basename) || top_level_directories.include?(basename) && p.parent.glob('*.gemspec').any?)
+          filtered << p
           yield(p)
         end
       end
@@ -46,7 +53,7 @@ module CleanupVendor
 
     def get_options(opts)
       %i[extensions filenames directories top_level_directories].map do |option|
-        opts.fetch(option, [])
+        opts.fetch(option, []).to_set
       end
     end
     private :get_options
@@ -73,10 +80,10 @@ module CleanupVendor
       blocks = all_files.map(&:blocks).sum
       bytes = all_files.map(&:size).sum
 
-      puts 'Summary:'
-      puts format_summary('Removed files:', count)
-      puts format_summary('Total blocks:', blocks)
-      puts format_summary('Total bytes:', bytes)
+      $stderr.puts 'Summary:'
+      $stderr.puts format_summary('Removed files:', count)
+      $stderr.puts format_summary('Total blocks:', blocks)
+      $stderr.puts format_summary('Total bytes:', bytes)
     end
     private :print_summary
   end
