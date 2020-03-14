@@ -3,7 +3,7 @@ if ENV['COVERAGE']
   SimpleCov.start do
     add_filter %r{^/spec/}
 
-    enable_coverage :branch
+    enable_coverage :branch if ENV['COVERAGE'] == 'branch'
   end
 end
 
