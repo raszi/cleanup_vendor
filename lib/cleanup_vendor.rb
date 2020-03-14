@@ -38,18 +38,35 @@ module CleanupVendor
       filtered = Set.new
 
       dir_entries(dir) do |p|
-        basename = p.basename.to_s
-
-        next if basename == '.'
+        next if p.basename.to_s == '.'
         next if p.descend.any? { |p| filtered.include?(p) }
 
-        if p.file? && (filenames.include?(basename) || extensions.include?(p.extname.delete('.'))) ||
-           p.directory? && (directories.include?(basename) || top_level_directories.include?(basename) && p.parent.glob('*.gemspec').any?)
+        if matches_filename?(filenames, p) || matches_extension?(extensions, p) || matches_directory?(directories, p) || matches_top_level_directory?(top_level_directories, p)
           filtered << p
           yield(p)
         end
       end
     end
+
+    def matches_filename?(filenames, p)
+      p.file? && filenames.include?(p.basename.to_s)
+    end
+    private :matches_filename?
+
+    def matches_extension?(extensions, p)
+      p.file? && extensions.include?(p.extname.delete('.'))
+    end
+    private :matches_extension?
+
+    def matches_directory?(directories, p)
+      p.directory? && directories.include?(p.basename.to_s)
+    end
+    private :matches_directory?
+
+    def matches_top_level_directory?(directories, p)
+      p.directory? && directories.include?(p.basename.to_s) && p.parent.glob('*.gemspec').any?
+    end
+    private :matches_top_level_directory?
 
     def get_options(opts)
       %i[extensions filenames directories top_level_directories].map do |option|
