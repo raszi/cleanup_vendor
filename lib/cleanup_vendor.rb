@@ -26,15 +26,9 @@ module CleanupVendor
 
     def filter(dir, opts = {})
       raise Error.new('Not a directory') unless dir && File.directory?(dir)
+      return to_enum(:filter, dir, opts) unless block_given?
 
-      unless block_given?
-        return to_enum(:filter, dir, opts)
-      end
-
-      extensions = opts[:extensions] || []
-      filenames = opts[:filenames] || []
-      directories = opts[:directories] || []
-      top_level_directories = opts[:top_level_directories] || []
+      extensions, filenames, directories, top_level_directories = get_options(opts)
 
       dir_entries(dir) do |f|
         basename = File.basename(f)
@@ -55,6 +49,13 @@ module CleanupVendor
         end
       end
     end
+
+    def get_options(opts)
+      %i[extensions filenames directories top_level_directories].map do |option|
+        opts.fetch(option, [])
+      end
+    end
+    private :get_options
 
     def dir_entries(dir, pattern = '**/*', &block)
       Dir.chdir(dir) do
