@@ -17,14 +17,10 @@ module CleanupVendor
       summary = []
 
       filter(dir, DEFAULTS.merge(opts)) do |p|
-        summary << collect_summary(dir, p) if opts[:summary]
+        summary << collect_summary(p) if opts[:summary]
 
-        $stderr.puts "Removing #{p}..." if opts[:verbose]
-
-        if opts[:print0]
-          $stdout.write p.to_s
-          $stdout.putc 0
-        end
+        print_verbose(p) if opts[:verbose]
+        print_path(p) if opts[:print0]
 
         FileUtils.remove_entry(p) unless opts[:dry_run]
       end
@@ -33,49 +29,54 @@ module CleanupVendor
     end
 
     def filter(dir, opts = {})
-      raise Error.new('Not a directory') unless dir && File.directory?(dir)
+      raise Error, 'Not a directory' unless File.directory?(dir.to_s)
       return to_enum(:filter, dir, opts) unless block_given?
 
-      extensions, filenames, directories, top_level_directories = get_options(opts)
+      file_opts, dir_opts = get_options(opts)
       filtered = Set.new
 
-      dir_entries(dir) do |p|
-        next if p.basename.to_s == '.'
-        next if p.descend.any? { |p| filtered.include?(p) }
+      dir_entries(dir) do |path|
+        next if skip_path?(path, filtered)
+        next unless match_file?(path, file_opts) || match_directory?(path, dir_opts)
 
-        if match_filename?(filenames, p) || match_extension?(extensions, p) || match_directory?(directories, p) || match_top_level_directory?(top_level_directories, p)
-          filtered << p
-          yield(p)
-        end
+        filtered << path
+        yield(path)
       end
     end
 
-    def match_filename?(filenames, p)
-      p.file? && filenames.include?(p.basename.to_s)
+    def skip_path?(path, filtered)
+      path.basename.to_s == '.' || path.descend.any? { |p| filtered.include?(p) }
     end
-    private :match_filename?
+    private :skip_path?
 
-    def match_extension?(extensions, p)
-      p.file? && extensions.include?(p.extname.delete('.'))
+    def match_file?(path, filenames: [], extensions: [])
+      return unless path.file?
+
+      filenames.include?(path.basename.to_s) || extensions.include?(path.extname.delete('.'))
     end
-    private :match_extension?
+    private :match_file?
 
-    def match_directory?(directories, p)
-      p.directory? && directories.include?(p.basename.to_s)
+    def match_directory?(path, directories: [], top_level_directories: [])
+      return unless path.directory?
+
+      basename = path.basename.to_s
+      directories.include?(basename) || top_level_directories.include?(basename) && path.parent.glob('*.gemspec').any?
     end
     private :match_directory?
 
-    def match_top_level_directory?(directories, p)
-      p.directory? && directories.include?(p.basename.to_s) && p.parent.glob('*.gemspec').any?
-    end
-    private :match_top_level_directory?
-
-    def get_options(opts)
-      %i[extensions filenames directories top_level_directories].map do |option|
-        opts.fetch(option, []).to_set
-      end
+    def get_options(options)
+      file_opts = transform_options(options, :filenames, :extensions)
+      dir_opts = transform_options(options, :directories, :top_level_directories)
+      [file_opts, dir_opts]
     end
     private :get_options
+
+    def transform_options(options, *keys)
+      options.slice(*keys).transform_values do |v|
+        (v || []).to_set
+      end
+    end
+    private :transform_options
 
     def dir_entries(dir, &block)
       Pathname.new(dir).glob('**/*', File::FNM_DOTMATCH, &block)
@@ -87,11 +88,22 @@ module CleanupVendor
     end
     private :format_summary
 
-    def collect_summary(dir, p)
-      files = p.file? ? [p] : dir_entries(p).reject { |p| p.basename.to_s == '.' }
+    def collect_summary(path)
+      files = path.file? ? [path] : dir_entries(path).reject { |p| p.basename.to_s == '.' }
       files.map(&:stat)
     end
     private :collect_summary
+
+    def print_verbose(path)
+      $stderr.puts "Removing #{path}..."
+    end
+    private :print_verbose
+
+    def print_path(path)
+      $stdout.write path
+      $stdout.putc 0
+    end
+    private :print_path
 
     def print_summary(summary)
       all_files = summary.flatten
