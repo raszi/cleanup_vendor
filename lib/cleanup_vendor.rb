@@ -15,26 +15,13 @@ module CleanupVendor
       summary = []
 
       filter(dir, DEFAULTS.merge(opts)) do |f|
-        if opts[:summary]
-          files = File.file?(f) ? [f] : dir_entries(f).grep_v('.').map { |file| File.join(f, file) }
-          summary << files.map { |f| File.stat(File.join(dir, f)) }
-        end
+        summary << collect_summary(dir, f) if opts[:summary]
 
         puts "Removing #{f}..." if opts[:dry_run] || opts[:verbose]
         FileUtils.remove_entry(f) unless opts[:dry_run]
       end
 
-      if opts[:summary]
-        all_files = summary.flatten
-        count = all_files.count
-        blocks = all_files.map(&:blocks).sum
-        bytes = all_files.map(&:size).sum
-
-        puts 'Summary:'
-        puts format_summary('Removed files:', count)
-        puts format_summary('Total blocks:', blocks)
-        puts format_summary('Total bytes:', bytes)
-      end
+      print_summary(summary) if opts[:summary]
     end
 
     def filter(dir, opts = {})
@@ -80,5 +67,24 @@ module CleanupVendor
       "\t#{prefix}\t#{number.to_s.rjust(20)}"
     end
     private :format_summary
+
+    def collect_summary(dir, f)
+      files = File.file?(f) ? [f] : dir_entries(f).grep_v('.').map { |file| File.join(f, file) }
+      files.map { |f| File.stat(File.join(dir, f)) }
+    end
+    private :collect_summary
+
+    def print_summary(summary)
+      all_files = summary.flatten
+      count = all_files.count
+      blocks = all_files.map(&:blocks).sum
+      bytes = all_files.map(&:size).sum
+
+      puts 'Summary:'
+      puts format_summary('Removed files:', count)
+      puts format_summary('Total blocks:', blocks)
+      puts format_summary('Total bytes:', bytes)
+    end
+    private :print_summary
   end
 end
