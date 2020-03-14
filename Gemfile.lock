@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    cleanup_vendor (0.1.0)
+    cleanup_vendor (0.2.0.pre.2)
 
 GEM
   remote: https://rubygems.org/
