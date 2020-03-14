@@ -16,7 +16,11 @@ opt_parser = OptionParser.new do |opts|
     options[:verbose] = v
   end
 
-  opts.on('--dry-run', 'Print the actions without executing them') do |d|
+  opts.on('-0', '--null', 'Print the pathname of the removed file to standard output, followed by an ASCII NUL character (character code 0).') do |d|
+    options[:print0] = d
+  end
+
+  opts.on('--dry-run', 'Do not delete files') do |d|
     options[:dry_run] = d
   end
 
