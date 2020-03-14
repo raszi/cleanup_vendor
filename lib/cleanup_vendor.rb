@@ -14,65 +14,45 @@ module CleanupVendor
     def run(dir, opts = {})
       summary = []
 
-      filter(dir, DEFAULTS.merge(opts)) do |f|
-        if opts[:summary]
-          files = File.file?(f) ? [f] : dir_entries(f).grep_v('.').map { |file| File.join(f, file) }
-          summary << files.map { |f| File.stat(File.join(dir, f)) }
-        end
+      filter(dir, DEFAULTS.merge(opts)) do |p|
+        summary << collect_summary(dir, p) if opts[:summary]
 
-        puts "Removing #{f}..." if opts[:dry_run] || opts[:verbose]
-        FileUtils.remove_entry(f) unless opts[:dry_run]
+        puts "Removing #{p}..." if opts[:dry_run] || opts[:verbose]
+        FileUtils.remove_entry(p) unless opts[:dry_run]
       end
 
-      if opts[:summary]
-        all_files = summary.flatten
-        count = all_files.count
-        blocks = all_files.map(&:blocks).sum
-        bytes = all_files.map(&:size).sum
-
-        puts 'Summary:'
-        puts format_summary('Removed files:', count)
-        puts format_summary('Total blocks:', blocks)
-        puts format_summary('Total bytes:', bytes)
-      end
+      print_summary(summary) if opts[:summary]
     end
 
     def filter(dir, opts = {})
       raise Error.new('Not a directory') unless dir && File.directory?(dir)
+      return to_enum(:filter, dir, opts) unless block_given?
 
-      unless block_given?
-        return to_enum(:filter, dir, opts)
-      end
+      extensions, filenames, directories, top_level_directories = get_options(opts)
 
-      extensions = opts[:extensions] || []
-      filenames = opts[:filenames] || []
-      directories = opts[:directories] || []
-      top_level_directories = opts[:top_level_directories] || []
+      dir_entries(dir) do |p|
+        basename = p.basename.to_s
+        next if basename == '.'
 
-      dir_entries(dir) do |f|
-        basename = File.basename(f)
-
-        if File.file?(f)
-          if filenames.include?(basename) || extensions.include?(File.extname(basename).delete('.'))
-            yield(f)
-          end
-        end
-
-        if File.directory?(f)
-          if directories.include?(basename)
-            yield(f)
-          elsif top_level_directories.include?(basename)
-            tld = File.join(dir, File.dirname(f))
-            yield(f) unless dir_entries(tld, '*.gemspec').empty?
-          end
+        if p.file? && (filenames.include?(basename) || extensions.include?(p.extname.delete('.')))
+          yield(p)
+        elsif p.directory? && directories.include?(basename)
+          yield(p)
+        elsif p.directory? && top_level_directories.include?(basename) && p.parent.glob('*.gemspec').any?
+          yield(p)
         end
       end
     end
 
-    def dir_entries(dir, pattern = '**/*', &block)
-      Dir.chdir(dir) do
-        Dir.glob(pattern, File::FNM_DOTMATCH, &block)
+    def get_options(opts)
+      %i[extensions filenames directories top_level_directories].map do |option|
+        opts.fetch(option, [])
       end
+    end
+    private :get_options
+
+    def dir_entries(dir, &block)
+      Pathname.new(dir).glob('**/*', File::FNM_DOTMATCH, &block)
     end
     private :dir_entries
 
@@ -80,5 +60,24 @@ module CleanupVendor
       "\t#{prefix}\t#{number.to_s.rjust(20)}"
     end
     private :format_summary
+
+    def collect_summary(dir, p)
+      files = p.file? ? [p] : dir_entries(p).reject { |p| p.basename.to_s == '.' }
+      files.map(&:stat)
+    end
+    private :collect_summary
+
+    def print_summary(summary)
+      all_files = summary.flatten
+      count = all_files.count
+      blocks = all_files.map(&:blocks).sum
+      bytes = all_files.map(&:size).sum
+
+      puts 'Summary:'
+      puts format_summary('Removed files:', count)
+      puts format_summary('Total blocks:', blocks)
+      puts format_summary('Total bytes:', bytes)
+    end
+    private :print_summary
   end
 end
