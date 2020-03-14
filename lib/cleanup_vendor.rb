@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'cleanup_vendor/version'
 
 module CleanupVendor
