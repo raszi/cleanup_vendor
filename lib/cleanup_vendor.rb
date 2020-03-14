@@ -14,11 +14,11 @@ module CleanupVendor
     def run(dir, opts = {})
       summary = []
 
-      filter(dir, DEFAULTS.merge(opts)) do |f|
-        summary << collect_summary(dir, f) if opts[:summary]
+      filter(dir, DEFAULTS.merge(opts)) do |p|
+        summary << collect_summary(dir, p) if opts[:summary]
 
-        puts "Removing #{f}..." if opts[:dry_run] || opts[:verbose]
-        FileUtils.remove_entry(f) unless opts[:dry_run]
+        puts "Removing #{p}..." if opts[:dry_run] || opts[:verbose]
+        FileUtils.remove_entry(p) unless opts[:dry_run]
       end
 
       print_summary(summary) if opts[:summary]
@@ -30,22 +30,16 @@ module CleanupVendor
 
       extensions, filenames, directories, top_level_directories = get_options(opts)
 
-      dir_entries(dir) do |f|
-        basename = File.basename(f)
+      dir_entries(dir) do |p|
+        basename = p.basename.to_s
+        next if basename == '.'
 
-        if File.file?(f)
-          if filenames.include?(basename) || extensions.include?(File.extname(basename).delete('.'))
-            yield(f)
-          end
-        end
-
-        if File.directory?(f)
-          if directories.include?(basename)
-            yield(f)
-          elsif top_level_directories.include?(basename)
-            tld = File.join(dir, File.dirname(f))
-            yield(f) unless dir_entries(tld, '*.gemspec').empty?
-          end
+        if p.file? && (filenames.include?(basename) || extensions.include?(p.extname.delete('.')))
+          yield(p)
+        elsif p.directory? && directories.include?(basename)
+          yield(p)
+        elsif p.directory? && top_level_directories.include?(basename) && p.parent.glob('*.gemspec').any?
+          yield(p)
         end
       end
     end
@@ -57,10 +51,8 @@ module CleanupVendor
     end
     private :get_options
 
-    def dir_entries(dir, pattern = '**/*', &block)
-      Dir.chdir(dir) do
-        Dir.glob(pattern, File::FNM_DOTMATCH, &block)
-      end
+    def dir_entries(dir, &block)
+      Pathname.new(dir).glob('**/*', File::FNM_DOTMATCH, &block)
     end
     private :dir_entries
 
@@ -69,9 +61,9 @@ module CleanupVendor
     end
     private :format_summary
 
-    def collect_summary(dir, f)
-      files = File.file?(f) ? [f] : dir_entries(f).grep_v('.').map { |file| File.join(f, file) }
-      files.map { |f| File.stat(File.join(dir, f)) }
+    def collect_summary(dir, p)
+      files = p.file? ? [p] : dir_entries(p).reject { |p| p.basename.to_s == '.' }
+      files.map(&:stat)
     end
     private :collect_summary
 

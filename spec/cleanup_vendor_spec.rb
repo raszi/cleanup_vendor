@@ -11,14 +11,15 @@ RSpec.describe CleanupVendor do
     let!(:extensions) do
       %w[c cpp gem h hpp java log md mk o rdoc txt].map do |ext|
         file = Tempfile.create(['test', ".#{ext}"], Dir.mktmpdir('kept', dir))
-        Pathname.new(file).relative_path_from(dir).to_s
+        Pathname.new(file)
       end
     end
 
     let!(:files) do
       %w[README Makefile LICENSE].map do |file|
-        FileUtils.touch(File.join(dir, file))
-        file
+        f = File.join(dir, file)
+        FileUtils.touch(f)
+        Pathname.new(f)
       end
     end
 
@@ -27,7 +28,7 @@ RSpec.describe CleanupVendor do
         subdir = File.join(dir, d)
         Dir.mkdir(subdir)
         Tempfile.create('test', subdir)
-        d
+        Pathname.new(subdir)
       end
     end
 
@@ -38,11 +39,11 @@ RSpec.describe CleanupVendor do
         subdir = File.join(topdir, d)
         Dir.mkdir(subdir)
         Tempfile.create('test', subdir)
-        Pathname.new(subdir).relative_path_from(dir).to_s
+        Pathname.new(subdir)
       end
     end
 
-    let(:all_files) { files + dirs + extensions }
+    let(:all_files_count) { files.count + 2 * dirs.count + extensions.count }
 
     before { FileUtils.touch(File.join(dir, 'kept.gemspec')) }
     after { FileUtils.remove_entry(dir) }
@@ -51,17 +52,15 @@ RSpec.describe CleanupVendor do
       it 'should remove all matching entries' do
         described_class.run(dir)
 
-        Dir.chdir(dir) do
-          files = Dir.glob('**/*', File::FNM_DOTMATCH).grep_v('.')
-          expect(files).to all(satisfy { |f| f.start_with?('kept') })
-          expect(files).to include(*non_top_level_directories)
-        end
+        files = dir.glob('**/*', File::FNM_DOTMATCH).reject { |p| p === dir }
+        expect(files).to all(satisfy { |p| p.relative_path_from(dir).to_s.start_with?('kept') })
+        expect(files).to include(*non_top_level_directories)
       end
     end
 
     context 'with summary' do
       it 'should display a nice summary' do
-        expected_count = all_files.count
+        expected_count = all_files_count
         expect { described_class.run(dir, summary: true) }.to output(/Summary:\s+Removed files:\s+#{expected_count}/).to_stdout
       end
     end
@@ -70,13 +69,10 @@ RSpec.describe CleanupVendor do
       it 'should keep all the entries' do
         expect { described_class.run(dir, dry_run: true) }.to output(/Removing/).to_stdout
 
-        Dir.chdir(dir) do
-          left_files = Dir.glob('**/*', File::FNM_DOTMATCH)
-
-          expect(left_files).to include(*files)
-          expect(left_files).to include(*dirs)
-          expect(left_files).to include(*extensions)
-        end
+        left_files = dir.glob('**/*', File::FNM_DOTMATCH)
+        expect(left_files).to include(*files)
+        expect(left_files).to include(*dirs)
+        expect(left_files).to include(*extensions)
       end
     end
   end
@@ -93,7 +89,8 @@ RSpec.describe CleanupVendor do
     context 'when called with a real directory' do
       let!(:rb) { Tempfile.create(['test', '.rb'], dir) }
       let!(:spec) { Dir.mkdir(File.join(dir, 'spec')) }
-      let!(:fix_filename) { File.basename(Tempfile.create('test', dir).path) }
+      let!(:tmpfile) { Pathname.new(Tempfile.create('test', dir).path) }
+      let!(:fix_filename) { tmpfile.basename.to_s }
 
       it 'without options it should return with an empty list' do
         expect { described_class.filter(dir).to be_empty }
@@ -104,17 +101,17 @@ RSpec.describe CleanupVendor do
       it 'should filter for extensions' do
         entries = described_class.filter(dir, extensions: %w[rb])
 
-        expect(entries).to all(satisfy { |f| File.file?(f) && f.end_with?('rb') })
+        expect(entries).to all(satisfy { |p| p.file? && p.to_s.end_with?('rb') })
       end
 
       it 'should filter for directories' do
         entries = described_class.filter(dir, directories: %w[spec])
 
-        expect(entries).to all(satisfy { |f| File.directory?(f) && %w[spec].include?(File.basename(f)) })
+        expect(entries).to all(satisfy { |p| p.directory? && %w[spec].include?(p.basename.to_s) })
       end
 
       it 'should filter for filenames' do
-        expect { |b| described_class.filter(dir, filenames: [fix_filename], &b) }.to yield_with_args(fix_filename)
+        expect { |b| described_class.filter(dir, filenames: [fix_filename], &b) }.to yield_with_args(tmpfile)
       end
     end
   end
