@@ -27,7 +27,7 @@ module CleanupVendor
     end
 
     def summary
-      entries = recursive_entries + [self]
+      entries = [self] + recursive_entries.to_a
       entries.map(&:stat)
     end
   end
