@@ -1,4 +1,4 @@
-:extensions:
+extensions:
   - c
   - cpp
   - gcov
@@ -14,7 +14,7 @@
   - orig
   - rdoc
   - txt
-:filenames:
+filenames:
   - .DS_Store
   - .appveyor.yml
   - .byebug_history
@@ -43,9 +43,9 @@
   - TAGS
   - TODO
   - gem_make.out
-:top_level_directories:
+top_level_directories:
   - spec
-:directories:
+directories:
   - .circleci
   - .config
   - .git

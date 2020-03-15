@@ -9,7 +9,7 @@ module CleanupVendor
   class Error < StandardError; end
 
   CONFIG_FILE = File.expand_path('defaults.yml', __dir__)
-  DEFAULTS = YAML.safe_load(File.binread(CONFIG_FILE), permitted_classes: [Symbol]).freeze
+  DEFAULTS = YAML.safe_load(File.binread(CONFIG_FILE)).transform_keys(&:to_sym).freeze
 
   class << self
     def run(dir, opts = {})
