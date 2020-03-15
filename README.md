@@ -1,8 +1,11 @@
 # CleanupVendor
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/cleanup_vendor`. To experiment with that code, run `bin/console` for an interactive prompt.
+[![Build Status](https://travis-ci.org/raszi/cleanup_vendor.svg?branch=master)](https://travis-ci.org/raszi/cleanup_vendor)
+[![Code Climate](https://codeclimate.com/github/raszi/cleanup_vendor/badges/gpa.svg)](https://codeclimate.com/github/raszi/cleanup_vendor)
+[![Test Coverage](https://codeclimate.com/github/raszi/cleanup_vendor/badges/coverage.svg)](https://codeclimate.com/github/raszi/cleanup_vendor)
+[![Gem Version](https://badge.fury.io/rb/cleanup_vendor.svg)](https://badge.fury.io/rb/cleanup_vendor)
 
-TODO: Delete this and the text above, and describe your gem
+This gem was created to help minimizing the size of your docker images.
 
 ## Installation
 
@@ -22,7 +25,14 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+After installing all your gems in your `Dockerfile` with bundler, run the `cleanup_vendor` executable in the same `RUN` instruction to cut back the size of the docker image.
+
+Something like:
+
+```Dockerfile
+RUN bundle install --deployment --frozen --jobs 4 --no-cache --retry 5 --without development test && \
+  bundle exec cleanup_vendor --summary
+```
 
 ## Development
 
@@ -32,7 +42,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/cleanup_vendor.
+Bug reports and pull requests are welcome on GitHub at https://github.com/raszi/cleanup_vendor.
 
 ## License
 
