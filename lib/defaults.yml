@@ -1,6 +1,7 @@
 :extensions:
   - c
   - cpp
+  - gcov
   - gem
   - h
   - hpp
@@ -10,22 +11,27 @@
   - md
   - mk
   - o
+  - orig
   - rdoc
   - txt
 :filenames:
+  - .DS_Store
   - .appveyor.yml
+  - .byebug_history
   - .codeclimate.yml
   - .dockerignore
   - .gitignore
   - .gitkeep
   - .gitmodules
   - .hound.yml
+  - .keep
   - .npmignore
   - .rspec
   - .rspec_status
   - .rubocop.yml
   - .ruby-gemset
   - .ruby-version
+  - .rvmrc
   - .travis.yml
   - .yardopts
   - CHANGELOG
@@ -34,11 +40,15 @@
   - Makefile
   - NEWS
   - README
+  - TAGS
   - TODO
   - gem_make.out
 :top_level_directories:
   - spec
 :directories:
   - .circleci
+  - .config
   - .git
   - .github
+  - .idea
+  - .yardoc
