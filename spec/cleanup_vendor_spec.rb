@@ -105,15 +105,16 @@ RSpec.describe CleanupVendor do
       let!(:spec) { Dir.mkdir(File.join(dir, 'spec')) }
       let!(:tmpfile) { Pathname.new(Tempfile.create('test', dir).path) }
       let!(:fix_filename) { tmpfile.basename.to_s }
+      let!(:gemspec) { Tempfile.create(['test', '.gemspec'], dir) }
 
       it 'without options it should return with an empty list' do
         expect { described_class.filter(dir).to be_empty }
       end
 
-      it { expect { |b| described_class.filter(dir, extensions: %w[rb], &b) }.to yield_control }
+      it { expect { |b| described_class.filter(dir, files: ['**/*.{rb}'], &b) }.to yield_control }
 
       it 'should filter for extensions' do
-        entries = described_class.filter(dir, extensions: %w[rb])
+        entries = described_class.filter(dir, files: ['**/*.{rb}'])
 
         expect(entries).to all(satisfy { |p| p.file? && p.to_s.end_with?('rb') })
       end
@@ -125,7 +126,7 @@ RSpec.describe CleanupVendor do
       end
 
       it 'should filter for filenames' do
-        expect { |b| described_class.filter(dir, filenames: [fix_filename], &b) }.to yield_with_args(tmpfile)
+        expect { |b| described_class.filter(dir, files: ["**/#{fix_filename}"], &b) }.to yield_with_args(tmpfile)
       end
     end
   end
