@@ -2,7 +2,7 @@
 
 require 'pathname'
 
-module CleaeupVendor
+module CleanupVendor
   class Path < ::Pathname
     def recursive_entries
       return to_enum(:recursive_entries) unless block_given?
