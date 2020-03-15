@@ -5,7 +5,9 @@
 [![Test Coverage](https://codeclimate.com/github/raszi/cleanup_vendor/badges/coverage.svg)](https://codeclimate.com/github/raszi/cleanup_vendor)
 [![Gem Version](https://badge.fury.io/rb/cleanup_vendor.svg)](https://badge.fury.io/rb/cleanup_vendor)
 
-This gem was created to help minimizing the size of your docker images.
+This gem was created to help minimizing the size of your Docker images by removing the unnecessary files in the production environment.
+
+Files like build leftovers, test files, CI configurations, etc. You can check the [`defaults.yml`](lib/defaults.yml) for the exact list.
 
 ## Installation
 
