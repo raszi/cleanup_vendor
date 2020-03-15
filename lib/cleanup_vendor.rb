@@ -1,9 +1,9 @@
 # frozen_string_literal: true
 
-require 'pathname'
 require 'yaml'
 
 require 'cleanup_vendor/version'
+require 'cleanup_vendor/path'
 
 module CleanupVendor
   class Error < StandardError; end
@@ -16,7 +16,7 @@ module CleanupVendor
       summary = []
 
       filter(dir, DEFAULTS.merge(opts)) do |p|
-        summary << collect_summary(p) if opts[:summary]
+        summary << p.summary if opts[:summary]
 
         print_verbose(p) if opts[:verbose]
         print_path(p) if opts[:print0]
@@ -27,71 +27,34 @@ module CleanupVendor
       print_summary(summary) if opts[:summary]
     end
 
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def filter(dir, opts = {})
       raise Error, 'Not a directory' unless File.directory?(dir.to_s)
       return to_enum(:filter, dir, opts) unless block_given?
 
-      file_opts, dir_opts = get_options(opts)
-      filtered = Set.new
+      files, directories, filtered = get_options(opts)
 
-      dir_entries(dir) do |path|
-        next if skip_path?(path, filtered)
-        next unless match_file?(path, file_opts) || match_directory?(path, dir_opts)
+      Path.new(dir).recursive_entries do |path|
+        next if path.include?(filtered)
+        next unless path.file? && path.match?(files) || path.directory? && path.match?(directories)
 
         filtered << path
         yield(path)
       end
     end
-
-    def skip_path?(path, filtered)
-      path.basename.to_s == '.' || path.descend.any? { |p| filtered.include?(p) }
-    end
-    private :skip_path?
-
-    def match_file?(path, filenames: [], extensions: [])
-      return unless path.file?
-
-      filenames.include?(path.basename.to_s) || extensions.include?(path.extname.delete('.'))
-    end
-    private :match_file?
-
-    def match_directory?(path, directories: [], top_level_directories: [])
-      return unless path.directory?
-
-      basename = path.basename.to_s
-      directories.include?(basename) || top_level_directories.include?(basename) && path.parent.glob('*.gemspec').any?
-    end
-    private :match_directory?
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def get_options(options)
-      file_opts = transform_options(options, :filenames, :extensions)
-      dir_opts = transform_options(options, :directories, :top_level_directories)
-      [file_opts, dir_opts]
-    end
-    private :get_options
-
-    def transform_options(options, *keys)
-      options.slice(*keys).transform_values do |v|
+      options.values_at(:files, :directories, :filtered).map do |v|
         (v || []).to_set
       end
     end
-    private :transform_options
-
-    def dir_entries(dir, &block)
-      Pathname.new(dir).glob('**/*', File::FNM_DOTMATCH, &block)
-    end
-    private :dir_entries
+    private :get_options
 
     def format_summary(prefix, number)
       "\t#{prefix}\t#{number.to_s.rjust(20)}"
     end
     private :format_summary
-
-    def collect_summary(path)
-      files = path.file? ? [path] : dir_entries(path).reject { |p| p.basename.to_s == '.' }
-      files.map(&:stat)
-    end
-    private :collect_summary
 
     def print_verbose(path)
       $stderr.puts "Removing #{path}..."

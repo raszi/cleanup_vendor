@@ -29,19 +29,14 @@ opt_parser = OptionParser.new do |opts|
     options[:summary] = s
   end
 
-  opts.on('-d', '--directory DIR', 'Match on this directory') do |dir|
+  opts.on('-d', '--directory PATTERN', 'Match on directory') do |pattern|
     options[:directories] ||= []
-    options[:directories] << dir
+    options[:directories] << pattern
   end
 
-  opts.on('-x', '--extension EXT', 'Match on extension') do |ext|
-    options[:extensions] ||= []
-    options[:extensions] << ext
-  end
-
-  opts.on('-f', '--file FILE', 'Match on these filenames') do |file|
-    options[:filenames] ||= []
-    options[:filenames] << file
+  opts.on('-f', '--extension PATTERN', 'Match on file') do |pattern|
+    options[:files] ||= []
+    options[:files] << pattern
   end
 
   opts.on_tail('-h', '--help', 'Show this message') do

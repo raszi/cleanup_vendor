@@ -101,31 +101,27 @@ RSpec.describe CleanupVendor do
     end
 
     context 'when called with a real directory' do
-      let!(:rb) { Tempfile.create(['test', '.rb'], dir) }
-      let!(:spec) { Dir.mkdir(File.join(dir, 'spec')) }
-      let!(:tmpfile) { Pathname.new(Tempfile.create('test', dir).path) }
-      let!(:fix_filename) { tmpfile.basename.to_s }
+      let!(:rb_file) { Tempfile.create(['test', '.rb'], dir) }
+      let!(:spec) { File.join(dir, 'spec').tap { |dir| Dir.mkdir(dir) } }
+      let!(:orig_file) { Tempfile.create(['test', '_spec.rb.orig'], spec) }
+      let!(:tmp_file) { Tempfile.create('test', dir) }
+      let!(:fix_filename) { File.basename(tmp_file) }
+      let!(:gemspec) { Tempfile.create(['test', '.gemspec'], dir) }
 
       it 'without options it should return with an empty list' do
         expect { described_class.filter(dir).to be_empty }
       end
 
-      it { expect { |b| described_class.filter(dir, extensions: %w[rb], &b) }.to yield_control }
-
       it 'should filter for extensions' do
-        entries = described_class.filter(dir, extensions: %w[rb])
-
-        expect(entries).to all(satisfy { |p| p.file? && p.to_s.end_with?('rb') })
+        expect { |b| described_class.filter(dir, files: ['**/*.{rb}'], &b) }.to yield_with_args(Pathname.new(rb_file))
       end
 
       it 'should filter for directories' do
-        entries = described_class.filter(dir, directories: %w[spec])
-
-        expect(entries).to all(satisfy { |p| p.directory? && %w[spec].include?(p.basename.to_s) })
+        expect { |b| described_class.filter(dir, directories: %w[spec], &b) }.to yield_with_args(Pathname.new(spec))
       end
 
       it 'should filter for filenames' do
-        expect { |b| described_class.filter(dir, filenames: [fix_filename], &b) }.to yield_with_args(tmpfile)
+        expect { |b| described_class.filter(dir, files: [fix_filename], &b) }.to yield_with_args(Pathname.new(tmp_file))
       end
     end
   end
