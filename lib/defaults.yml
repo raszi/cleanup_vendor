@@ -1,0 +1,44 @@
+:extensions:
+  - c
+  - cpp
+  - gem
+  - h
+  - hpp
+  - java
+  - log
+  - markdown
+  - md
+  - mk
+  - o
+  - rdoc
+  - txt
+:filenames:
+  - .appveyor.yml
+  - .codeclimate.yml
+  - .dockerignore
+  - .gitignore
+  - .gitkeep
+  - .gitmodules
+  - .hound.yml
+  - .npmignore
+  - .rspec
+  - .rspec_status
+  - .rubocop.yml
+  - .ruby-gemset
+  - .ruby-version
+  - .travis.yml
+  - .yardopts
+  - CHANGELOG
+  - LICENSE
+  - MIT-LICENSE
+  - Makefile
+  - NEWS
+  - README
+  - TODO
+  - gem_make.out
+:top_level_directories:
+  - spec
+:directories:
+  - .circleci
+  - .git
+  - .github

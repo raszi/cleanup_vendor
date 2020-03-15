@@ -1,21 +1,15 @@
 # frozen_string_literal: true
 
 require 'pathname'
+require 'yaml'
+
 require 'cleanup_vendor/version'
 
 module CleanupVendor
   class Error < StandardError; end
 
-  DEFAULTS = {
-    extensions: %w[c cpp gem h hpp java log md mk o rdoc txt],
-    filenames: %w[
-      README Makefile LICENSE CHANGELOG .codeclimate.yml .dockerignore
-      .gitignore .gitkeep .rubocop.yml .ruby-version .ruby-gemset .rspec
-      .rspec_status .travis.yml .yardopts
-    ],
-    top_level_directories: %w[spec],
-    directories: %w[.git .github]
-  }.freeze
+  CONFIG_FILE = File.expand_path('defaults.yml', __dir__)
+  DEFAULTS = YAML.safe_load(File.binread(CONFIG_FILE), permitted_classes: [Symbol]).freeze
 
   class << self
     def run(dir, opts = {})
