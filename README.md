@@ -38,7 +38,7 @@ RUN bundle install --deployment --frozen --jobs 4 --no-cache --retry 5 --without
 
 To make it even smaller you can create a separate group in your `Gemfile` for this gem and remove that in the next step:
 
-```Gemfile
+```ruby
 group :build do
   gem 'cleanup_vendor'
 end
