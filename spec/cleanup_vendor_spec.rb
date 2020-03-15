@@ -126,7 +126,7 @@ RSpec.describe CleanupVendor do
       end
 
       it 'should filter for filenames' do
-        expect { |b| described_class.filter(dir, files: ["**/#{fix_filename}"], &b) }.to yield_with_args(tmpfile)
+        expect { |b| described_class.filter(dir, files: [fix_filename], &b) }.to yield_with_args(tmpfile)
       end
     end
   end
