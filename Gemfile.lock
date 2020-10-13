@@ -70,7 +70,7 @@ DEPENDENCIES
   pry-doc (~> 1.0)
   rspec (~> 3.0)
   rubocop (~> 0.80.1)
-  simplecov (~> 0.17.1)
+  simplecov (= 0.17.1)
 
 BUNDLED WITH
    1.17.3
