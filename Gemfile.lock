@@ -63,7 +63,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 1.17)
+  bundler (~> 2.1)
   cleanup_vendor!
   gem-release (~> 2.1)
   pry-byebug (~> 3.8)
@@ -73,4 +73,4 @@ DEPENDENCIES
   simplecov (= 0.17.1)
 
 BUNDLED WITH
-   1.17.3
+   2.1.4
