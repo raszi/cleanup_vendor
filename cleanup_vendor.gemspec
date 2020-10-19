@@ -28,6 +28,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'pry-byebug', '~> 3.8'
   spec.add_development_dependency 'pry-doc', '~> 1.0'
   spec.add_development_dependency 'rspec', '~> 3.0'
-  spec.add_development_dependency 'rubocop', '~> 0.80.1'
+  spec.add_development_dependency 'rubocop', '~> 0.93.1'
   spec.add_development_dependency 'simplecov', '= 0.17.1'
 end
