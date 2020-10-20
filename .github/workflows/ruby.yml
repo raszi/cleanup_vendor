@@ -8,9 +8,11 @@ on:
 
 jobs:
   test:
-    matrix:
-      runs-on: ubuntu-latest
-      ruby: [2.5, 2.6, 2.7]
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        ruby: [2.5, 2.6, 2.7]
 
     steps:
     - uses: actions/checkout@v2
