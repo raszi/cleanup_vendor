@@ -27,7 +27,7 @@ module CleanupVendor
       print_summary(summary) if opts[:summary]
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
     def filter(dir, opts = {})
       raise Error, 'Not a directory' unless File.directory?(dir.to_s)
       return to_enum(:filter, dir, opts) unless block_given?
@@ -42,7 +42,7 @@ module CleanupVendor
         yield(path)
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
     def get_options(options)
       options.values_at(:files, :directories, :filtered).map do |v|
