@@ -123,6 +123,10 @@ RSpec.describe CleanupVendor do
       it 'should filter for filenames' do
         expect { |b| described_class.filter(dir, files: [fix_filename], &b) }.to yield_with_args(Pathname.new(tmp_file))
       end
+
+      it 'should filter for exclusions' do
+        expect { |b| described_class.filter(dir, exclude: [fix_filename], &b) }.to yield_with_args(Pathname.new(tmp_file))
+      end
     end
   end
 end
