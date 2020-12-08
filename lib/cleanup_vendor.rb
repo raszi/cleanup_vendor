@@ -32,9 +32,10 @@ module CleanupVendor
       raise Error, 'Not a directory' unless File.directory?(dir.to_s)
       return to_enum(:filter, dir, opts) unless block_given?
 
-      files, directories, filtered = get_options(opts)
+      files, directories, filtered, exclude = get_options(opts)
 
       Path.new(dir).recursive_entries do |path|
+        next if path.match?(exclude)
         next if path.include?(filtered)
         next unless path.file? && path.match?(files) || path.directory? && path.match?(directories)
 
@@ -45,7 +46,7 @@ module CleanupVendor
     # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
 
     def get_options(options)
-      options.values_at(:files, :directories, :filtered).map do |v|
+      options.values_at(:files, :directories, :filtered, :exclude).map do |v|
         (v || []).to_set
       end
     end
