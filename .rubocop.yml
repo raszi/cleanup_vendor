@@ -32,3 +32,6 @@ Style/HashTransformValues:
 Style/StderrPuts:
   Exclude:
     - "lib/cleanup_vendor.rb"
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
