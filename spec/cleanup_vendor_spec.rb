@@ -126,7 +126,8 @@ RSpec.describe CleanupVendor do
       end
 
       it 'should filter for exclusions' do
-        expect { |b| described_class.filter(dir, exclude: [exclude_file.path], &b) }.to_not yield_with_args(Pathname.new(exclude_file))
+        exclude_path = Pathname.new(exclude_file)
+        expect { |b| described_class.filter(dir, exclude: [exclude_file.path], &b) }.to_not yield_with_args(exclude_path)
       end
     end
   end

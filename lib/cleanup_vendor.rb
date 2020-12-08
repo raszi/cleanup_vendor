@@ -27,7 +27,7 @@ module CleanupVendor
       print_summary(summary) if opts[:summary]
     end
 
-    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
     def filter(dir, opts = {})
       raise Error, 'Not a directory' unless File.directory?(dir.to_s)
       return to_enum(:filter, dir, opts) unless block_given?
