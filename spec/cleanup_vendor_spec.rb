@@ -107,6 +107,7 @@ RSpec.describe CleanupVendor do
       let!(:tmp_file) { Tempfile.create('test', dir) }
       let!(:fix_filename) { File.basename(tmp_file) }
       let!(:gemspec) { Tempfile.create(['test', '.gemspec'], dir) }
+      let!(:exclude_file) { Tempfile.create('common.txt', dir) }
 
       it 'without options it should return with an empty list' do
         expect { described_class.filter(dir).to be_empty }
@@ -125,7 +126,7 @@ RSpec.describe CleanupVendor do
       end
 
       it 'should filter for exclusions' do
-        expect { |b| described_class.filter(dir, exclude: [fix_filename], &b) }.to yield_with_args(Pathname.new(tmp_file))
+        expect { |b| described_class.filter(dir, exclude: [exclude_file.path], &b) }.to_not yield_with_args(Pathname.new(exclude_file))
       end
     end
   end
