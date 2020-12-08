@@ -39,6 +39,11 @@ opt_parser = OptionParser.new do |opts|
     options[:files] << pattern
   end
 
+  opts.on('-x', '--filter PATTERN', 'Exclude (or filter) pattern') do |pattern|
+    options[:filtered] ||= []
+    options[:filtered] << pattern
+  end
+
   opts.on_tail('-h', '--help', 'Show this message') do
     puts opts
     exit
