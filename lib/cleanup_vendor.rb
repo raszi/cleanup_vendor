@@ -43,7 +43,7 @@ module CleanupVendor
         yield(path)
       end
     end
-    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity
+    # rubocop:enable Metrics/AbcSize, Metrics/CyclomaticComplexity, Metrics/PerceivedComplexity
 
     def get_options(options)
       options.values_at(:files, :directories, :filtered, :exclude).map do |v|
