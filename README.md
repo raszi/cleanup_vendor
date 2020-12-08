@@ -82,10 +82,17 @@ Specific options:
     -s, --summary                    Display a summary after execution
     -d, --directory PATTERN          Match on directory
     -f, --extension PATTERN          Match on file
+    -e  --exclude pattern            Exclude pattern from matching
     -h, --help                       Show this message
     -V, --version                    Show version
 ```
 
+### Override Examples
+
+This example excludes a file from the Password Strength gem
+```
+bundle exec cleanup_vendor --dry-run --verbose -e '**/password_strength*/*/common.txt' 
+```
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
