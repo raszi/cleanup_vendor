@@ -5,19 +5,19 @@ AllCops:
   TargetRubyVersion: 2.5
   NewCops: enable
   Exclude:
-    - 'bin/**/*'
-    - 'vendor/**/*'
-    - 'vendor.test/**/*'
+    - "bin/**/*"
+    - "vendor/**/*"
+    - "vendor.test/**/*"
 
 Layout/LineLength:
   Exclude:
-    - 'exe/cleanup_vendor'
+    - "exe/cleanup_vendor"
   Max: 128
 
 Metrics/BlockLength:
   Exclude:
-    - 'exe/cleanup_vendor'
-    - 'spec/**/*'
+    - "exe/cleanup_vendor"
+    - "spec/**/*"
 
 Style/AccessModifierDeclarations:
   Enabled: false
@@ -31,4 +31,4 @@ Style/HashTransformValues:
   Enabled: true
 Style/StderrPuts:
   Exclude:
-    - 'lib/cleanup_vendor.rb'
+    - "lib/cleanup_vendor.rb"
