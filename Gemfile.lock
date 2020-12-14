@@ -42,7 +42,7 @@ GEM
       diff-lcs (>= 1.2.0, < 2.0)
       rspec-support (~> 3.10.0)
     rspec-support (3.10.0)
-    rubocop (1.5.2)
+    rubocop (1.6.1)
       parallel (~> 1.10)
       parser (>= 2.7.1.5)
       rainbow (>= 2.2.2, < 4.0)
@@ -75,7 +75,7 @@ DEPENDENCIES
   pry-byebug (~> 3.8)
   pry-doc (~> 1.0)
   rspec (~> 3.0)
-  rubocop (~> 1.5.2)
+  rubocop (~> 1.6.1)
   rubocop-rspec (~> 2.0, >= 2.0.1)
   simplecov (= 0.17.1)
 
