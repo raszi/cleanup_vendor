@@ -39,4 +39,3 @@ jobs:
           CC_TEST_REPORTER_ID: 223eccd52e0685221f32d788a5847a98d00c00688c3eebfa714ee95887d40f20
         with:
           coverageCommand: bundle exec rspec
-          debug: true
