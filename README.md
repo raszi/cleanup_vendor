@@ -1,6 +1,6 @@
 # CleanupVendor
 
-[![Build Status](https://travis-ci.org/raszi/cleanup_vendor.svg?branch=master)](https://travis-ci.org/raszi/cleanup_vendor)
+[![Build Status](https://github.com/raszi/cleanup_vendor/workflows/Ruby/badge.svg?branch=master)](https://github.com/raszi/cleanup_vendor/actions?query=workflow%3ARuby)
 [![Code Climate](https://codeclimate.com/github/raszi/cleanup_vendor/badges/gpa.svg)](https://codeclimate.com/github/raszi/cleanup_vendor)
 [![Test Coverage](https://codeclimate.com/github/raszi/cleanup_vendor/badges/coverage.svg)](https://codeclimate.com/github/raszi/cleanup_vendor)
 [![Gem Version](https://badge.fury.io/rb/cleanup_vendor.svg)](https://badge.fury.io/rb/cleanup_vendor)
@@ -90,9 +90,11 @@ Specific options:
 ### Override Examples
 
 This example excludes a file from the Password Strength gem
+
 ```
-bundle exec cleanup_vendor --dry-run --verbose -e '**/password_strength*/*/common.txt' 
+bundle exec cleanup_vendor --dry-run --verbose -e '**/password_strength*/*/common.txt'
 ```
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `bundle exec spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
