@@ -2,6 +2,7 @@
 
 require 'fileutils'
 require 'yaml'
+require 'set'
 
 require 'cleanup_vendor/version'
 require 'cleanup_vendor/path'
