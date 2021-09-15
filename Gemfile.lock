@@ -22,7 +22,7 @@ GEM
     pry-byebug (3.9.0)
       byebug (~> 11.0)
       pry (~> 0.13.0)
-    pry-doc (1.1.0)
+    pry-doc (1.2.0)
       pry (~> 0.11)
       yard (~> 0.9.11)
     rainbow (3.0.0)
@@ -63,7 +63,7 @@ GEM
     simplecov-html (0.12.3)
     simplecov_json_formatter (0.1.2)
     unicode-display_width (2.0.0)
-    yard (0.9.25)
+    yard (0.9.26)
 
 PLATFORMS
   ruby
