@@ -4,8 +4,8 @@ require 'fileutils'
 require 'yaml'
 require 'set'
 
-require 'cleanup_vendor/version'
-require 'cleanup_vendor/path'
+require_relative 'cleanup_vendor/version'
+require_relative 'cleanup_vendor/path'
 
 module CleanupVendor
   class Error < StandardError; end
@@ -39,7 +39,7 @@ module CleanupVendor
       Path.new(dir).recursive_entries do |path|
         next if path.match?(exclude)
         next if path.include?(filtered)
-        next unless path.file? && path.match?(files) || path.directory? && path.match?(directories)
+        next unless (path.file? && path.match?(files)) || (path.directory? && path.match?(directories))
 
         filtered << path
         yield(path)
