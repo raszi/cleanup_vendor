@@ -4,8 +4,8 @@ require 'fileutils'
 require 'yaml'
 require 'set'
 
-require 'cleanup_vendor/version'
-require 'cleanup_vendor/path'
+require_relative 'cleanup_vendor/version'
+require_relative 'cleanup_vendor/path'
 
 module CleanupVendor
   class Error < StandardError; end
