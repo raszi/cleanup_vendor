@@ -8,7 +8,7 @@ options = {}
 
 opt_parser = OptionParser.new do |opts|
   name = File.basename(__FILE__)
-  opts.banner = "Usage: #{name} [options]"
+  opts.banner = "Usage: #{name} [options] [dir]"
 
   opts.separator ''
   opts.separator 'Specific options:'
