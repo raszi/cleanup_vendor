@@ -39,7 +39,7 @@ module CleanupVendor
       Path.new(dir).recursive_entries do |path|
         next if path.match?(exclude)
         next if path.include?(filtered)
-        next unless path.file? && path.match?(files) || path.directory? && path.match?(directories)
+        next unless (path.file? && path.match?(files)) || (path.directory? && path.match?(directories))
 
         filtered << path
         yield(path)

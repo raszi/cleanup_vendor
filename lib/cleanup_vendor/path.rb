@@ -15,8 +15,8 @@ module CleanupVendor
     def match?(patterns)
       patterns.any? do |p|
         p.eql?(self) ||
-          p.start_with?('**') && fnmatch?(p, File::FNM_EXTGLOB) ||
-          basename.fnmatch?(p, File::FNM_EXTGLOB) && gem_level?
+          (p.start_with?('**') && fnmatch?(p, File::FNM_EXTGLOB)) ||
+          (gem_level? && basename.fnmatch?(p, File::FNM_EXTGLOB))
       end
     end
 

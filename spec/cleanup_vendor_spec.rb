@@ -6,7 +6,7 @@ RSpec.describe CleanupVendor do
   let(:dir) { Pathname.new(Dir.mktmpdir('cleanup_vendor')) }
 
   it 'has a version number' do
-    expect(CleanupVendor::VERSION).not_to be nil
+    expect(CleanupVendor::VERSION).not_to be_nil
   end
 
   describe '.run' do
@@ -45,7 +45,7 @@ RSpec.describe CleanupVendor do
       end
     end
 
-    let(:all_files_count) { files.count + 2 * dirs.count + extensions.count }
+    let(:all_files_count) { files.count + (2 * dirs.count) + extensions.count }
 
     before { FileUtils.touch(File.join(dir, 'kept.gemspec')) }
 
