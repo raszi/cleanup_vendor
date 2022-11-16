@@ -73,7 +73,7 @@ Please note that patterns like `**/*.rb` will match every file with `.rb` extens
 The CLI supports multiple convenient options:
 
 ```
-Usage: cleanup_vendor [options]
+Usage: cleanup_vendor [options] [dir]
 
 Specific options:
     -v, --[no-]verbose               Run verbosely
@@ -82,7 +82,7 @@ Specific options:
     -s, --summary                    Display a summary after execution
     -d, --directory PATTERN          Match on directory
     -f, --extension PATTERN          Match on file
-    -e  --exclude pattern            Exclude pattern from matching
+    -e, --exclude PATTERN            Exclude pattern from matching
     -h, --help                       Show this message
     -V, --version                    Show version
 ```
