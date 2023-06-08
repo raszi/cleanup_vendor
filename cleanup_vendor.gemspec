@@ -34,5 +34,5 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec', '~> 3.0'
   spec.add_development_dependency 'rubocop', '~> 1.39'
   spec.add_development_dependency 'rubocop-rspec', '~> 2.15'
-  spec.add_development_dependency 'simplecov', '= 0.21.2'
+  spec.add_development_dependency 'simplecov', '= 0.22.0'
 end
