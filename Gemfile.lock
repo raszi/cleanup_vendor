@@ -72,7 +72,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 2.1)
   cleanup_vendor!
   gem-release (~> 2.1)
   pry-byebug (~> 3.8)
