@@ -15,19 +15,13 @@ jobs:
         ruby: ['2.7', '3.0', '3.1']
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: ${{ matrix.ruby }}
           bundler-cache: true
-
-      - name: Update the RubyGems system software
-        run: gem update --system
-
-      - name: Update Bundler
-        run: bundle update --bundler
 
       - name: Install dependencies
         run: bundle install
