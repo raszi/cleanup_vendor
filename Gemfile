@@ -2,7 +2,14 @@
 
 source 'https://rubygems.org'
 
-git_source(:github) { |repo_name| "https://github.com/#{repo_name}" }
-
 # Specify your gem's dependencies in cleanup_vendor.gemspec
 gemspec
+
+gem 'bundler', '~> 2.1'
+gem 'gem-release', '~> 2.1'
+gem 'pry-byebug', '~> 3.8'
+gem 'pry-doc', '~> 1.0'
+gem 'rspec', '~> 3.0'
+gem 'rubocop', '~> 1.39'
+gem 'rubocop-rspec', '~> 2.15'
+gem 'simplecov', '= 0.22.0'
