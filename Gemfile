@@ -7,7 +7,7 @@ gemspec
 
 gem 'gem-release', '~> 2.1'
 gem 'pry-byebug', '~> 3.8'
-gem 'pry-doc', '~> 1.0'
+gem 'pry-doc', '~> 1.5'
 gem 'rspec', '~> 3.0'
 gem 'rubocop', '~> 1.39'
 gem 'rubocop-rspec', '~> 2.15'
